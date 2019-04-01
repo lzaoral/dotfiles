@@ -1,0 +1,51 @@
+#!/bin/bash
+# 
+
+# GENERAL INITIALIZATION
+#
+
+# Start compositing to support transparency. You can omit this
+# if you prefer not to use any transparency, but it is likely to cause
+# ugly black fringing with some programs such as synapse that expect
+# transparency support.
+compton --config ~/.config/compton.conf -CGb
+
+#
+# KEYBOARD LAYOUTS
+#
+setxkbmap -layout "us,cz(qwerty)" -option "grp:alt_shift_toggle" &
+#
+# LOAD SCREEN BACKGROUNDS
+#
+
+# To set your backgrounds, run nitrogren /path/to/images
+nitrogen --restore &
+
+
+#
+# STARTUP ICON TRAY
+#
+
+# We are using stalonetray to create a small icon tray at the
+# top right of the screen. You are likely to want to tweak the
+# size of the icons and the width of the tray based upon the
+# size of your screen and your xmobar configuration. The goal is
+# to make stalonetray look like it is part of xmobar.
+trayer --align right --monitor primary --tint 0 --widthtype pixel --width 100 --height 18 --padding 2 --iconspacing 2 --transparent true --alpha 0 &
+nm-applet &
+volumeicon &
+redshift -l 49.11:16.36 &
+parcellite &
+
+telegram-desktop &
+spotify &
+
+# Run the gnome-keyring-daemon to avoid issues you otherwise may encounter
+# when using gnome applications which expect access to the keyring, such
+# as Empathy. This prevents prompts you may otherwise get for invalid
+# certificates and the like.
+eval $(gnome-keyring-daemon --start)
+export GNOME_KEYRING_SOCKET
+export GNOME_KEYRING_PID
+
+exec xmonad

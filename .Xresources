@@ -1,0 +1,21 @@
+URxvt.font: xft:xos4 Terminus:size=13
+URxvt.boldFont: xft:xos4 Terminus:size=13:style=bold
+URxvt.italicFont: xft:xos4 Terminus:size=13:style=italic
+URxvt.boldItalicFont: xft:xos4 Terminus:size=13:style=italic:style=bold
+
+URxvt.background: black
+URxvt.foreground: gray
+
+URxvt.iso14755: false
+URxvt.iso14755_52: false
+
+URxvt.scrollBar: false
+URxvt.internalBorder: 2
+
+URxvt.perl-ext-common: default,url-select,resize-font
+
+URxvt.keysym.C-Down:  resize-font:smaller
+URxvt.keysym.C-Up:    resize-font:bigger
+
+URxvt.url-select.launcher: /usr/bin/xdg-open
+URxvt.url-select.underline: true
