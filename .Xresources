@@ -1,9 +1,10 @@
-URxvt.font: xft:xos4 Terminus:size=13
-URxvt.boldFont: xft:xos4 Terminus:size=13:style=bold
-URxvt.italicFont: xft:xos4 Terminus:size=13:style=italic
-URxvt.boldItalicFont: xft:xos4 Terminus:size=13:style=italic:style=bold
+URxvt.font: xft:xos4 Terminess Powerline:size=13
+URxvt.boldFont: xft:xos4 Terminess Powerline:size=13:style=bold
+URxvt.italicFont: xft:xos4 Terminess Powerline:size=13:style=italic
+URxvt.boldItalicFont: xft:xos4 Terminess Powerline:size=13:style=italic:style=bold
 
-URxvt.background: black
+URxvt.depth: 32
+URxvt.background: [95]black
 URxvt.foreground: gray
 
 URxvt.iso14755: false
