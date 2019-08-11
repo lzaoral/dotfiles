@@ -4,7 +4,6 @@ set encoding=utf-8
 set number
 set linebreak
 set showbreak=+++
-set textwidth=80
 set showmatch
 set showcmd
 set cursorline
@@ -19,9 +18,9 @@ set incsearch
 set autoindent
 set cindent
 set shiftwidth=4
-set smartindent
 set smarttab
-set softtabstop=4 noexpandtab
+set tabstop=4 
+set expandtab
 set wrap
 
 set ruler
@@ -39,6 +38,7 @@ call plug#begin('~/.vim/plugged')
     Plug 'tpope/vim-fugitive'
     Plug 'scrooloose/nerdtree'
     Plug 'Xuyuanp/nerdtree-git-plugin'
+    Plug 'ryanoasis/vim-devicons'
 call plug#end()
 
 colorscheme codedark
@@ -49,41 +49,45 @@ endif
 
 " nerdtree
 map <C-n> :NERDTreeToggle<CR>
-let g:NERDTreeDirArrowExpandable = '▸'
-let g:NERDTreeDirArrowCollapsible = '▾'
-
 
 " airline
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#branch#enabled = 1
+let g:airline#extensions#ale#enabled = 1
 
 if !exists('g:airline_symbols')
-    let g:airline_symbols = {}
+  let g:airline_symbols = {}
 endif
 
-" airline symbols
+" unicode symbols
+let g:airline_symbols.linenr = '␊'
+let g:airline_symbols.notexists = 'Ɇ'
+let g:airline_symbols.whitespace = 'Ξ'
+
+" powerline symbols
 let g:airline_left_sep = ''
 let g:airline_left_alt_sep = ''
 let g:airline_right_sep = ''
 let g:airline_right_alt_sep = ''
 let g:airline_symbols.branch = ''
 let g:airline_symbols.readonly = ''
-let g:airline_symbols.linenr = ''
+let g:airline_symbols.maxlinenr = ' '
+let g:airline_symbols.dirty='⚡'
 
 " ALE
 let g:ale_completion_enabled = 1
-let g:ale_linters = { 'c': ['gcc', 'clangtidy', 'clang-format'], 'cpp': ['clang', 'clangtidy', 'clang-format'],    'haskell': ['ghc', 'hlint'] }
+let g:ale_linters = { 'c': ['gcc', 'clang-tidy', 'clang-format'], 'cpp': ['clang', 'clang-tidy', 'clang-format'], 'haskell': ['ghc', 'hlint'] }
 
 " c
 let g:ale_c_gcc_executable = 'gcc'
-let g:ale_c_gcc_options = '-std=c99 -Wall -Wextra -pedantic'
+let g:ale_c_gcc_options = '-std=c11 -Wall -Wextra -pedantic'
 let g:ale_c_clangtidy_executable = 'clang-tidy'
-let g:ale_c_clangtidy_options = '-std=c99 -Wall -Wextra -pedantic'
+let g:ale_c_clangtidy_options = '-std=c11 -Wall -Wextra -pedantic'
 
 " cpp
 let g:ale_cpp_clang_executable = 'clang++'
-let g:ale_cpp_clang_options = '-std=c++17 -Wall -Wextra -pedantic -Wall-style-cast'
+let g:ale_cpp_clang_options = '-std=c++17 -Wall -Wextra -pedantic -Wold-style-cast'
 let g:ale_cpp_clangtidy_executable = 'clang-tidy'
 let g:ale_cpp_clangtidy_options = '-std=c++17 -Wall -Wextra -pedantic -Wold-style-cast'
 
