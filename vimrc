@@ -1,3 +1,27 @@
+" Get the defaults that most users want.
+source $VIMRUNTIME/defaults.vim
+
+if has("vms")
+  set nobackup		" do not keep a backup file, use versions instead
+else
+  set backup		" keep a backup file (restore to previous version)
+  if has('persistent_undo')
+    set undofile	" keep an undo file (undo changes after closing)
+  endif
+endif
+
+
+" Add optional packages.
+"
+" The matchit plugin makes the % command work better, but it is not backwards
+" compatible.
+" The ! means the package won't be loaded right away but when plugins are
+" loaded during initialization.
+if has('syntax') && has('eval')
+  packadd! matchit
+endif
+
+
 set nocompatible
 set encoding=utf-8
 
@@ -22,11 +46,13 @@ set expandtab
 set wrap
 
 set ruler
+set colorcolumn=80
 set undolevels=1000
 set backspace=indent,eol,start
 
 set spell spelllang=cs,en
 set mouse=a
+set wildmenu
 
 filetype plugin on
 
@@ -51,24 +77,30 @@ map <silent> <leader><cr> :noh<cr>
 let g:ale_completion_enabled = 1
 
 let g:ale_linters = {
-\   'c': ['clangd', 'clang-format'],
-\   'cpp': ['clangd', 'clang-format'],
-\   'haskell': ['ghc', 'hlint']
+\   'c': ['clangd'],
+\   'cpp': ['clangd'],
+\   'haskell': ['ghc', 'hlint'],
+\   'python': ['pyls', 'flake8', 'mypy']
 \}
 
 let g:ale_fixers = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
-\   'c': ['clang-format'],
-\   'cpp': ['clang-format'],
+\   'c': ['clang-format', 'clangtidy'],
+\   'cpp': ['clang-format', 'clangtidy'],
 \   'haskell': ['hlint']
 \}
 
+nmap <F7> <Plug>(ale_fix)
+
 " c
 let g:ale_c_gcc_options = '-std=c11 -Wall -Wextra -pedantic'
+let g:ale_c_clangformat_options = '-style=file'
+let g:ale_c_clangd_options = '-j=4 --suggest-missing-includes --clang-tidy'
 
 " cpp
 let g:ale_cpp_clang_options = '-std=c++17 -Wall -Wextra -pedantic -Wold-style-cast'
-let g:ale_cpp_clangd_options = '-compile-commands-dir=~/redhat/divine/divine-current-release/'
+let g:ale_cpp_clangformat_options = '-style=file'
+let g:ale_c_clangd_options = '-j=4 --suggest-missing-includes --clang-tidy'
 
 " haskell
 let g:ale_haskell_ghc_options = '-dynamic -fno-code -v0'
@@ -80,6 +112,7 @@ map <C-n> :NERDTreeToggle<CR>
 map <F8> :TagbarToggle<CR>
 
 " airline
+set noshowmode
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tagbar#enabled = 1
@@ -91,8 +124,11 @@ if !exists('g:airline_symbols')
   let g:airline_symbols = {}
 endif
 
-let g:airline_symbols.linenr = '␊'
+let g:airline_symbols.linenr = ''
+let g:airline_symbols.maxlinenr = ' '
 let g:airline_symbols.whitespace = 'Ξ'
+let g:airline_symbols.notexists = ' '
+let g:airline_symbols.dirty = ' '
 
 call plug#begin('~/.vim/plugged')
     Plug 'vim-airline/vim-airline'
@@ -108,6 +144,7 @@ call plug#begin('~/.vim/plugged')
     Plug 'tpope/vim-surround'
     Plug 'airblade/vim-gitgutter'
     Plug 'junegunn/fzf.vim'
+    Plug 'lambdalisue/vim-manpager'
     Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 call plug#end()
 
