@@ -1,0 +1,6 @@
+[user]
+	name = Lukas Zaoral
+[commit]
+	gpgsign = true
+[pull]
+	rebase = true

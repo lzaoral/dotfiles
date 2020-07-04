@@ -1,5 +1,5 @@
-#!/bin/bash
-# 
+#!/bin/zsh
+#
 
 # GENERAL INITIALIZATION
 #
@@ -8,7 +8,7 @@
 # if you prefer not to use any transparency, but it is likely to cause
 # ugly black fringing with some programs such as synapse that expect
 # transparency support.
-compton --config ~/.config/compton.conf -CGb
+picom --config ~/.config/picom.conf -CGb
 
 #
 # KEYBOARD LAYOUTS
@@ -18,27 +18,23 @@ setxkbmap -layout "us,cz(qwerty)" -option "grp:alt_shift_toggle" &
 # LOAD SCREEN BACKGROUNDS
 #
 
+. .screenlayout/*.sh
+
 # To set your backgrounds, run nitrogren /path/to/images
 nitrogen --restore &
 
+light-locker --no-late-locking --lock-on-lid --lock-on-suspend &
 
 #
 # STARTUP ICON TRAY
 #
-
-# We are using stalonetray to create a small icon tray at the
-# top right of the screen. You are likely to want to tweak the
-# size of the icons and the width of the tray based upon the
-# size of your screen and your xmobar configuration. The goal is
-# to make stalonetray look like it is part of xmobar.
-trayer --align right --monitor primary --tint 0 --widthtype pixel --width 100 --height 18 --padding 2 --iconspacing 2 --transparent true --alpha 0 &
+trayer --align right --monitor primary --tint 0 --widthtype request --height 18 --padding 2 --iconspacing 2 --transparent true --alpha 0 &
 nm-applet &
-volumeicon &
 redshift -l 49.11:16.36 &
 parcellite &
 
 telegram-desktop &
-spotify &
+discord &
 
 # Run the gnome-keyring-daemon to avoid issues you otherwise may encounter
 # when using gnome applications which expect access to the keyring, such

@@ -1,0 +1,199 @@
+" Get the defaults that most users want.
+source $VIMRUNTIME/defaults.vim
+
+" Unfortunately, Fedora's defaults.vim do not contain this section. :/
+if has('mouse')
+  if &term =~ 'xterm'
+    set mouse=a
+  else
+    set mouse=nvi
+  endif
+endif
+
+" Source: archlinux.vim
+if exists('$XDG_CACHE_HOME')
+  let &g:directory=$XDG_CACHE_HOME
+else
+  let &g:directory=$HOME . '/.cache'
+endif
+let &g:undodir=&g:directory . '/vim/undo//'
+let &g:backupdir=&g:directory . '/vim/backup//'
+let &g:directory.='/vim/swap//'
+" Create directories if they doesn't exist
+if ! isdirectory(expand(&g:directory))
+  silent! call mkdir(expand(&g:directory), 'p', 0700)
+endif
+if ! isdirectory(expand(&g:backupdir))
+  silent! call mkdir(expand(&g:backupdir), 'p', 0700)
+endif
+if ! isdirectory(expand(&g:undodir))
+  silent! call mkdir(expand(&g:undodir), 'p', 0700)
+endif
+
+set backup		" keep a backup file (restore to previous version)
+set undofile	" keep an undo file (undo changes after closing)
+
+set encoding=utf-8
+
+set number
+set linebreak
+set showbreak=+++
+set showmatch
+set showcmd
+set cursorline
+
+set hlsearch
+set smartcase
+set ignorecase
+set incsearch
+
+set autoindent
+set cindent
+set shiftwidth=4
+set smarttab
+set tabstop=4
+set expandtab
+set wrap
+
+set list
+set ruler
+set colorcolumn=80
+set undolevels=1000
+set backspace=indent,eol,start
+
+set spell spelllang=cs,en
+
+set ballooneval
+set balloonevalterm
+
+set ttymouse=sgr
+set ttyfast
+
+syntax on
+set signcolumn=yes
+
+"""""""""""""""""""
+""" Term Debug """"
+"""""""""""""""""""
+packadd termdebug
+let g:termdebug_popup = 0
+let g:termdebug_wide = 163
+
+"""""""""""""""""""
+""" Key mapping """
+"""""""""""""""""""
+
+nnoremap <C-j> :m .+1<CR>==
+nnoremap <C-k> :m .-2<CR>==
+inoremap <C-j> <Esc>:m .+1<CR>==gi
+inoremap <C-k> <Esc>:m .-2<CR>==gi
+vnoremap <C-j> :m '>+1<CR>gv=gv
+vnoremap <C-k> :m '<-2<CR>gv=gv
+
+" Disable search highlight when <leader><cr> is pressed
+map <silent> <leader><cr> :noh<cr>
+
+
+"""""""""""
+""" ALE """
+"""""""""""
+let g:ale_completion_enabled = 1
+let g:ale_set_balloons = 1
+let g:ale_linters_explicit = 1
+let g:ale_open_list = 1
+let g:ale_list_window_size = 5
+
+let g:ale_linters = {
+\   'c': ['clangd'],
+\   'cpp': ['clangd'],
+\   'haskell': ['ghc', 'hlint'],
+\   'python': ['pyls', 'mypy'],
+\   'sh' : ['shellcheck'],
+\   'bash' : ['shellcheck'],
+\}
+
+let g:ale_fixers = {
+\   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\   'c': ['clang-format'],
+\   'cpp': ['clang-format'],
+\   'haskell': ['hlint']
+\}
+
+nmap <F7> <Plug>(ale_fix)
+
+" c
+let g:ale_c_gcc_options = '-std=c17 -Wall -Wextra -pedantic'
+let g:ale_c_clangformat_options = '-style=file'
+let g:ale_c_clangd_options = '-j=$(nproc) --suggest-missing-includes --clang-tidy --header-insertion=iwyu --header-insertion-decorators'
+
+" cpp
+let g:ale_cpp_clang_options = '-std=c++17 -Wall -Wextra -pedantic -Wold-style-cast'
+let g:ale_cpp_clangformat_options = '-style=file'
+let g:ale_cpp_clangd_options = '-j=$(nproc) --suggest-missing-includes --clang-tidy --header-insertion=iwyu --header-insertion-decorators'
+
+" haskell
+let g:ale_haskell_ghc_options = '-dynamic -fno-code -v0 -Wall'
+
+" nerdtree
+map <C-n> :NERDTreeToggle<CR>
+
+" tagbar
+map <F8> :TagbarToggle<CR>
+
+" airline
+set noshowmode
+let g:airline_powerline_fonts = 0
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tagbar#enabled = 1
+let g:airline#extensions#branch#enabled = 1
+let g:airline#extensions#ale#enabled = 1
+let g:airline_skip_empty_sections = 1
+
+let g:airline#extensions#wordcount#enabled = 0 "FIXME
+let g:airline#extensions#wordcount#filetypes =
+    \ ['asciidoc', 'help', 'mail', 'markdown', 'org', 'plaintex', 'rst', 'tex', 'text']
+
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+
+let g:airline_left_alt_sep = '│'
+let g:airline_right_alt_sep = '│'
+let g:airline_symbols.branch = ''
+let g:airline_symbols.readonly = ''
+let g:airline_symbols.linenr = ''
+let g:airline_symbols.maxlinenr = ''
+let g:airline_symbols.whitespace = 'Ξ'
+let g:airline_symbols.notexists = '[?]'
+let g:airline_symbols.dirty = '[+]'
+
+call plug#begin('~/.vim/plugged')
+  Plug 'vim-airline/vim-airline'
+  Plug 'tomasiser/vim-code-dark'
+  Plug 'dense-analysis/ale'
+  Plug 'romainl/vim-cool'
+  Plug 'scrooloose/nerdtree'
+  Plug 'Xuyuanp/nerdtree-git-plugin'
+" Plug 'ryanoasis/vim-devicons'
+" Plug 'majutsushi/tagbar'
+  Plug 'tpope/vim-fugitive'
+  Plug 'tpope/vim-surround'
+  Plug 'tpope/vim-sleuth'
+  Plug 'tpope/vim-sensible'
+  Plug 'airblade/vim-gitgutter'
+  Plug 'junegunn/fzf.vim'
+  Plug 'lambdalisue/vim-manpager'
+  Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+  Plug 'tmux-plugins/vim-tmux'
+  Plug 'tmux-plugins/vim-tmux-focus-events'
+  Plug 'idris-hackers/idris-vim'
+  "Plug 'neovimhaskell/haskell-vim'
+call plug#end()
+
+colorscheme codedark
+let g:airline_theme = 'codedark'
+
+if exists('+termguicolors')
+  let &t_8f="\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b="\<Esc>[48;2;%lu;%lu;%lum"
+endif
