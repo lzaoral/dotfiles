@@ -48,7 +48,7 @@ Config { font = "xft: xos4 Terminus:size=8"
                     , Run Locks
                     , Run Kbd [ ("us", "US"), ("cz(qwerty)", "CZ") ]
                     , Run Swap [] 50
-                    , Run Com "/home/lukas/.xmonad/volume.sh" [] "volume" 1
+                    , Run Com "/home/lukas/.config/xmobar/volume.sh" [] "volume" 1
                     , Run Mpris2 "spotify" [
                                 "-t", "<artist> - <title>"
                             ] 10

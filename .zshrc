@@ -2,11 +2,11 @@ if [[ "$TERM" == (alacritty|*termite) ]]; then
   export COLORTERM=truecolor
 fi
 
-if [[ "$TERM" == "alacritty" ]] && [[ -n "$DISPLAY" ]] && ! xprop -id "$WINDOWID" 2> /dev/null \
+if [[ -n "$DISPLAY" ]] && ! xprop -id "$WINDOWID" 2> /dev/null \
         | grep -q Scratchpad ; then
   # If not running interactively, do not do anything
   [[ $- != *i* ]] && return
-  [[ -z "$TMUX" ]] && exec tmux -u
+  [[ -z "$TMUX" ]] && exec tmux
 fi
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
@@ -52,27 +52,24 @@ alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias diff='diff --color=auto'
 
-eval $(dircolors -b ~/.dir_colors)
-zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
-
 alias ll='ls -la'
 
 alias aisa='ssh aisa'
 alias ccat='highlight -O xterm256 -l'
 alias fedora32='virsh start fedora32 2> /dev/null; ssh fedora32'
 
-export BROWSER=firefox
-export TERMINAL=alacritty
-export VISUAL=vim
-export EDITOR="$VISUAL"
-export DOTNET_CLI_TELEMETRY_OPTOUT=1
-export PATH="$PATH:/opt/divine/bin:/home/lukas/.gem/ruby/2.7.0/bin"
-
+alias dgit="git --git-dir ~/.dotfiles/.git --work-tree=$HOME"
 alias vimrc="$VISUAL ~/.vim/vimrc"
 alias zshrc="$VISUAL ~/.zshrc && source ~/.zshrc"
-alias tmuxrc="$VISUAL ~/.tmux.conf"
-alias xmonadrc="$VISUAL ~/.xmonad/xmonad.hs && xmonad --recompile && xmonad --restart"
-alias xmobarrc="$VISUAL ~/.xmonad/xmobar*.hs && xmonad --restart"
+alias tmuxrc="$VISUAL $XDG_CONFIG_HOME/tmux/tmux.conf"
+alias xmonadrc="$VISUAL $XDG_CONFIG_HOME/xmonad/xmonad.hs && xmonad --recompile && xmonad --restart"
+alias xmobarrc="$VISUAL $XDG_CONFIG_HOME/xmobar/xmobar*.hs && xmonad --restart"
+
+# for compile_comamnds.json
+alias cmake="cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+
+eval $(dircolors -b "$XDG_CONFIG_HOME/.dir_colors")
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 
 # Nastavení kláves
 bindkey "\e[1~" beginning-of-line
@@ -115,6 +112,16 @@ export LESS_TERMCAP_ue=$'\E[0m'        # reset underline
 
 export GIT_PAGER="LESS='$LESS_COMMON_OPTS' less -F"
 
+# Env
+export BROWSER=firefox
+export TERMINAL=alacritty
+export VISUAL=vim
+export EDITOR="$VISUAL"
+export DOTNET_CLI_TELEMETRY_OPTOUT=1
+
+# Enable VA-API with X11 and Firefox
+export MOZ_X11_EGL=1
+
 PLUGIN_DIR=/usr/share/zsh/plugins
 
 source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
@@ -129,4 +136,3 @@ source $PLUGIN_DIR/zsh-history-substring-search/zsh-history-substring-search.zsh
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=bold,fg=39
-alias dgit='git --git-dir ~/.dotfiles/.git --work-tree=$HOME'

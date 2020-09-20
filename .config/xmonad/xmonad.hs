@@ -17,6 +17,7 @@ import XMonad.Hooks.EwmhDesktops
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.UrgencyHook
+import XMonad.Hooks.WindowSwallowing
 
 import qualified XMonad.StackSet as W
 
@@ -25,17 +26,22 @@ import XMonad.Util.Run ( spawnPipe )
 import XMonad.Util.NamedScratchpad
 
 import Data.List ( nub )
+import Data.Monoid ( All )
+
+import System.Environment ( getEnv )
 import System.IO ( hPutStrLn )
 
 main :: IO ()
 main = do
     n <- countScreens
-    xmprocs <- mapM (\i -> spawnPipe $ "xmobar ~/.xmonad/xmobar-" ++ show i ++ ".hs -x " ++ show i) ([0..n-1] :: [Int])
-    xmonad $ myUrgencyHook $ ewmh def
+    home <- getEnv "HOME"
+    xmprocs <- mapM (\i -> spawnPipe $ "xmobar " ++ home ++ "/.config/xmobar/xmobar-"
+            ++ show i ++ ".hs -x " ++ show i) ([0..n-1] :: [Int])
+    xmonad $ myUrgencyHook $ ewmhFullscreen $ ewmh def
         { manageHook         = myManageHook <+> manageDocks <+> namedScratchpadManageHook myScratchPads <+> manageHook def
         , layoutHook         = avoidStruts $ smartBorders $ onWorkspace (getMainWorkspace n) (noBorders Full) $ tall ||| Mirror tall ||| noBorders Full
-        , handleEventHook    = handleEventHook def <+> docksEventHook <+> fullscreenEventHook <+> dynamicPropertyChange "WM_CLASS" myDynHook
-        , logHook            = logHook def <+> mapM_ (\handle -> dynamicLogWithPP $ xmobarPP
+        , handleEventHook    = handleEventHook def <+> docksEventHook <+> mySwallowEventHook <+> dynamicPropertyChange "WM_CLASS" myDynHook
+        , logHook            = logHook def <+> mapM_ (\handle -> dynamicLogWithPP xmobarPP
                 { ppOutput          = hPutStrLn handle
                 , ppCurrent         = xmobarColor "yellow" "" . wrap "[" "]"
                 , ppHiddenNoWindows = xmobarColor "grey" "" . noScratchPad
@@ -50,7 +56,7 @@ main = do
         , focusedBorderColor = "#cd8b00"
         , modMask            = mod4Mask
         , workspaces         = map show ([1..5] :: [Int])
-        , startupHook        = startupHook def <+> setFullscreenSupported
+--      , startupHook        = startupHook def
         } `additionalKeysP` myKeys
     where noScratchPad ws = if ws == "NSP" then "" else ws
           tall = Tall 1 (3/100) (1/2)
@@ -58,7 +64,7 @@ main = do
 
 myXPromptConfig :: XPConfig
 myXPromptConfig = def
-    { font = "xft: Terminus:size=13"
+    { font = "xft:Terminus:size=13"
     , bgColor = "black"
     , fgColor = "grey"
     , bgHLight = "brey"
@@ -108,6 +114,7 @@ myKeys = [ ( "<XF86AudioPlay>", spawn "playerctl play-pause" )
          , ( "<Print>", spawn "gnome-screenshot --interactive" )
          , ( "M4-b", sendMessage ToggleStruts )
          , ( "M4-<Backspace>", focusUrgent )
+         , ( "S-M4-q", spawn "loginctl terminate-session $XDG_SESSION_ID" )
          ]
     where scratchPad = namedScratchpadAction myScratchPads "terminal"
 
@@ -134,6 +141,11 @@ myDynHook = do
             [ className =? "spotify" <||> className =? "Spotify" --> doShift desktop
             ]
 
+mySwallowEventHook :: Event -> X All
+mySwallowEventHook = swallowEventHook
+    (className =? "Alacritty" <||> className =? "tmux" <||> className =? "Termite") $ return True
+
+
 myScratchPads :: [NamedScratchpad]
 myScratchPads = [ NS "terminal" spawnTerm  findTerm  manageTerm
                 ]
@@ -146,24 +158,3 @@ myScratchPads = [ NS "terminal" spawnTerm  findTerm  manageTerm
                 w = 1
                 t = 1 - h - 0.016
                 l = 1 - w
-
--- hack to let firefox run fullscreen
-setFullscreenSupported :: X ()
-setFullscreenSupported = withDisplay $ \dpy -> do
-    r <- asks theRoot
-    a <- getAtom "_NET_SUPPORTED"
-    c <- getAtom "ATOM"
-    supp <- mapM getAtom
-                [ "_NET_WM_STATE_HIDDEN"
-                , "_NET_WM_STATE_FULLSCREEN" -- XXX Copy-pasted to add this line
-                , "_NET_NUMBER_OF_DESKTOPS"
-                , "_NET_CLIENT_LIST"
-                , "_NET_CLIENT_LIST_STACKING"
-                , "_NET_CURRENT_DESKTOP"
-                , "_NET_DESKTOP_NAMES"
-                , "_NET_ACTIVE_WINDOW"
-                , "_NET_WM_DESKTOP"
-                , "_NET_WM_STRUT"
-                ]
-
-    io $ changeProperty32 dpy r a c propModeReplace (fmap fromIntegral supp)

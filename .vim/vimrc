@@ -61,7 +61,8 @@ set colorcolumn=80
 set undolevels=1000
 set backspace=indent,eol,start
 
-set spell spelllang=cs,en
+" TODO: spell only for some files
+set spelllang=cs,en
 
 set ballooneval
 set balloonevalterm

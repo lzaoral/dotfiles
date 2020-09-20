@@ -4,3 +4,7 @@
 	gpgsign = true
 [pull]
 	rebase = true
+[merge]
+	tool = vimdiff
+[tag]
+	gpgSign = true
