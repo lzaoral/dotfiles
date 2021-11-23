@@ -1,0 +1,17 @@
+{
+    "clangd.semanticHighlighting": true,
+    "diagnostic.warningSign": "!!",
+    "languageserver": {
+        "haskell": {
+            "command": "haskell-language-server-wrapper",
+            "args": ["--lsp"],
+            "rootPatterns": ["*.cabal", "stack.yaml", "cabal.project", "package.yaml", "hie.yaml"],
+            "filetypes": ["haskell", "lhaskell"]
+        }
+    },
+    "python.linting.flake8Enabled": true,
+    "python.linting.mypyEnabled": true,
+    "diagnostic-languageserver.filetypes": {
+        "sh": "shellcheck"
+    }
+}
