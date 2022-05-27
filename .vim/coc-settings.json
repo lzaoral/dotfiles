@@ -1,5 +1,5 @@
 {
-    "clangd.semanticHighlighting": true,
+    "semanticTokens.filetypes": ["c", "cpp", "cuda", "rust"],
     "diagnostic.warningSign": "!!",
     "languageserver": {
         "haskell": {

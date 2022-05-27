@@ -19,6 +19,7 @@ endif
 let &g:undodir=&g:directory . '/vim/undo//'
 let &g:backupdir=&g:directory . '/vim/backup//'
 let &g:directory.='/vim/swap//'
+
 " Create directories if they doesn't exist
 if ! isdirectory(expand(&g:directory))
   silent! call mkdir(expand(&g:directory), 'p', 0700)
@@ -58,7 +59,6 @@ set wrap
 set list
 set title
 set ruler
-set title
 set colorcolumn=80
 set undolevels=1000
 set backspace=indent,eol,start
@@ -77,6 +77,8 @@ set signcolumn=number
 filetype on
 filetype plugin on
 filetype indent on
+
+runtime ftplugin/man.vim
 
 " Spell-check Markdown files and Git Commit Messages
 autocmd FileType gitcommit setlocal spell complete+=kspell
@@ -122,6 +124,7 @@ let g:airline#extensions#branch#enabled = 1
 let g:airline#extensions#coc#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tagbar#enabled = 1
+let g:airline#extensions#virtualenv#enabled = 1
 let g:airline#extensions#wordcount#enabled = 1
 let g:airline_skip_empty_sections = 1
 
@@ -132,6 +135,8 @@ endif
 let g:airline_symbols.branch = ''
 let g:airline_symbols.readonly = ''
 let g:airline_symbols.whitespace = 'Ξ'
+
+let g:python_highlight_all = 1
 
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
@@ -280,19 +285,23 @@ endif
 call plug#begin('~/.vim/plugged')
   Plug 'ctrlpvim/ctrlp.vim'
   Plug 'fisadev/vim-isort'
-  Plug 'jackguo380/vim-lsp-cxx-highlight'
+  Plug 'jmcantrell/vim-virtualenv'
   Plug 'junegunn/vim-plug'
   Plug 'majutsushi/tagbar'
   Plug 'mhinz/vim-signify'
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
+  Plug 'neovimhaskell/haskell-vim'
   Plug 'rhysd/vim-llvm'
   Plug 'romainl/vim-cool'
   Plug 'sainnhe/gruvbox-material'
   Plug 'scrooloose/nerdtree'
+  Plug 'tlvince/vim-compiler-python'
   Plug 'tpope/vim-fugitive'
   Plug 'tpope/vim-sensible'
   Plug 'tpope/vim-sleuth'
   Plug 'vim-airline/vim-airline'
+  Plug 'vim-perl/vim-perl', {'for': 'perl'}
+  Plug 'vim-python/python-syntax'
 call plug#end()
 
 """""""""""
@@ -304,10 +313,15 @@ if exists('+termguicolors')
   set termguicolors
 endif
 
+" undercurls
+let &t_Cs = "\e[4:3m"
+let &t_Ce = "\e[4:0m"
+
 let g:gruvbox_material_italic = 1
 let g:gruvbox_material_contrast_dark = 'hard'
 let g:gruvbox_material_palette = 'original'
 let g:gruvbox_material_statusline_style = 'original'
+let g:gruvbox_material_diagnostic_text_highlight = 1
 
 set background=dark
 
