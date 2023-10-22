@@ -1,10 +1,24 @@
 [user]
-	name = Lukas Zaoral
+	name = Lukáš Zaoral
 [commit]
 	gpgsign = true
+	verbose = true
 [pull]
 	rebase = true
 [merge]
 	tool = vimdiff
 [tag]
 	gpgSign = true
+[init]
+	defaultBranch = main
+[fetch]
+	prune = true
+[alias]
+	# from gitlab doc
+	mr = !sh -c 'git fetch ${2:-origin} merge-requests/$1/head:mr-$1 && git checkout mr-$1' -
+	# by msekleta
+	pr = "!f() { git fetch -fu ${2:-origin} refs/pull/$1/head:pr/$1 && git checkout pr/$1; }; f"
+[stash]
+	showPatch = yes
+[diff]
+	colorMoved = default

@@ -2,7 +2,7 @@ if [[ "$TERM" == (alacritty|*termite) ]]; then
   export COLORTERM=truecolor
 fi
 
-if [[ -n "$DISPLAY" ]] && ! xprop -id "$WINDOWID" 2> /dev/null \
+if [[ -z "$CODE" ]] && [[ -n "$DISPLAY" ]] && ! xprop -id "$WINDOWID" 2> /dev/null \
         | grep -q Scratchpad ; then
   # If not running interactively, do not do anything
   [[ $- != *i* ]] && return
@@ -20,7 +20,6 @@ setopt INC_APPEND_HISTORY
 HISTFILE=~/.histfile
 HISTSIZE=1000
 SAVEHIST=10000
-bindkey -v
 
 fpath=(/usr/share/zsh/site-functions/ $fpath)
 
@@ -30,7 +29,14 @@ zstyle ':completion:*' menu select
 zstyle ':completion:*' rehash true
 setopt COMPLETE_ALIASES
 
+autoload -Uz zmv
 autoload -Uz add-zsh-hook
+
+#_dotnet_zsh_complete() {
+#  local completions=("$(dotnet complete "$words")")
+#  reply=( "${(ps:\n:)completions}" )
+#}
+#compctl -K _dotnet_zsh_complete dotnet
 
 function xterm_title_precmd () {
   print -Pn -- '\e]2;%n@%m %~\a'
@@ -54,50 +60,26 @@ alias diff='diff --color=auto'
 
 alias ll='ls -la'
 
-alias aisa='ssh aisa'
 alias ccat='highlight -O xterm256 -l'
-alias fedora32='virsh start fedora32 2> /dev/null; ssh fedora32'
+alias virsh='virsh --connect qemu:///system'
+alias fedora='virsh start fedora && sleep 20s; ssh fedora'
 
 alias dgit="git --git-dir ~/.dotfiles/.git --work-tree=$HOME"
-alias vimrc="$VISUAL ~/.vim/vimrc"
-alias zshrc="$VISUAL ~/.zshrc && source ~/.zshrc"
-alias tmuxrc="$VISUAL $XDG_CONFIG_HOME/tmux/tmux.conf"
-alias xmonadrc="$VISUAL $XDG_CONFIG_HOME/xmonad/xmonad.hs && xmonad --recompile && xmonad --restart"
-alias xmobarrc="$VISUAL $XDG_CONFIG_HOME/xmobar/xmobar*.hs && xmonad --restart"
 
-# for compile_comamnds.json
-alias cmake="cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+# for compile_commands.json + Ninja
+alias cmake="cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -GNinja -Bbuild"
+
+alias bkrssh="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -l root"
 
 eval $(dircolors -b "$XDG_CONFIG_HOME/.dir_colors")
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 
-# Nastavení kláves
 bindkey "\e[1~" beginning-of-line
+bindkey "\e[2~" quoted-insert
+bindkey "\e[3~" delete-char
 bindkey "\e[4~" end-of-line
 bindkey "\e[5~" beginning-of-history
 bindkey "\e[6~" end-of-history
-bindkey "\e[3~" delete-char
-bindkey "\e[2~" quoted-insert
-bindkey "\e[5C" forward-word
-bindkey "\eOc" emacs-forward-word
-bindkey "\e[5D" backward-word
-bindkey "\eOd" emacs-backward-word
-bindkey "\e\e[C" forward-word
-bindkey "\e\e[D" backward-word
-bindkey "^H" backward-delete-word
-# pro rxvt
-bindkey "\e[8~" end-of-line
-bindkey "\e[7~" beginning-of-line
-# pro ne RH/Debian xterm, nemůže ublížit RH/DEbian xtermu
-bindkey "\eOH" beginning-of-line
-bindkey "\eOF" end-of-line
-# pro freebsd konzoli
-bindkey "\e[H" beginning-of-line
-bindkey "\e[F" end-of-line
-# doplňování uprostřed řádku
-bindkey '^i' expand-or-complete-prefix
-
-bindkey '^R' history-incremental-search-backward
 
 export LESS_COMMON_OPTS='-R --mouse --wheel-lines=3'
 export LESSOPEN='| /usr/bin/source-highlight-esc.sh %s'
@@ -118,6 +100,20 @@ export TERMINAL=alacritty
 export VISUAL=vim
 export EDITOR="$VISUAL"
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
+export CLICOLOR_FORCE=1
+
+# ccache
+export PATH="/usr/lib/ccache/bin:$PATH"
+
+# python user-site
+export PATH="$PATH:$HOME/.local/bin"
+
+# Aliases
+alias vimrc="$VISUAL ~/.vim/vimrc"
+alias zshrc="$VISUAL ~/.zshrc && source ~/.zshrc"
+alias tmuxrc="$VISUAL $XDG_CONFIG_HOME/tmux/tmux.conf"
+alias xmonadrc="$VISUAL $XDG_CONFIG_HOME/xmonad/xmonad.hs && xmonad --recompile && xmonad --restart"
+alias xmobarrc="$VISUAL $XDG_CONFIG_HOME/xmobar/xmobar*.hs && xmonad --restart"
 
 # Enable VA-API with X11 and Firefox
 export MOZ_X11_EGL=1

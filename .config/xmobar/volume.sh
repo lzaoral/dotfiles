@@ -21,6 +21,12 @@ esac
 src="Volume"
 if pamixer --list-sinks | grep bluez > /dev/null; then
     src="Bt"
+    for line in $(upower -e); do
+      if [[ "$line" =~ ^/org/freedesktop/UPower/devices/headset ]]; then
+        batt=" Batt: $(upower -i "$line" | grep "percentage:" | awk '{print $2}')"
+        break
+      fi
+    done
 fi
 
-echo "$src: $bar"
+echo "$src: $bar$batt"

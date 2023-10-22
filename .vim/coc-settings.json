@@ -1,5 +1,4 @@
 {
-    "semanticTokens.filetypes": ["c", "cpp", "cuda", "rust"],
     "diagnostic.warningSign": "!!",
     "languageserver": {
         "haskell": {
@@ -13,5 +12,12 @@
     "python.linting.mypyEnabled": true,
     "diagnostic-languageserver.filetypes": {
         "sh": "shellcheck"
-    }
+    },
+    "inlayHint.display": false,
+    "python.linting.mypyArgs": [
+        "--no-pretty",
+        "--ignore-missing-imports",
+        "--follow-imports=silent",
+        "--show-column-numbers"
+    ]
 }

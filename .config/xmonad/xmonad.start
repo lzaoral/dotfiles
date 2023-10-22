@@ -1,47 +1,35 @@
 #!/bin/zsh
-#
 
+#
 # GENERAL INITIALIZATION
 #
-
-# Start compositing to support transparency. You can omit this
-# if you prefer not to use any transparency, but it is likely to cause
-# ugly black fringing with some programs such as synapse that expect
-# transparency support.
-picom --config ~/.config/picom.conf -CGb
+numlockx &
+light-locker --no-late-locking --lock-on-suspend &
 
 #
 # KEYBOARD LAYOUTS
 #
-setxkbmap -layout "us,cz(qwerty)" -option "grp:alt_shift_toggle" &
-#
-# LOAD SCREEN BACKGROUNDS
-#
+ibus-daemon -drxR
 
-. .screenlayout/*.sh
-
-# To set your backgrounds, run nitrogren /path/to/images
+#
+# SCREEN STUFF
+#
+autorandr -c --force
 nitrogen --restore &
-
-light-locker --no-late-locking --lock-on-lid --lock-on-suspend &
+source ~/.config/xmonad/xrandr-full-color-range.sh
 
 #
 # STARTUP ICON TRAY
 #
 trayer --align right --monitor primary --tint 0 --widthtype request --height 18 --padding 2 --iconspacing 2 --transparent true --alpha 0 &
 nm-applet &
-redshift -l 49.11:16.36 &
-parcellite &
-
+blueman-applet &
+redshift &
 telegram-desktop &
 discord &
+spotify &
 
-# Run the gnome-keyring-daemon to avoid issues you otherwise may encounter
-# when using gnome applications which expect access to the keyring, such
-# as Empathy. This prevents prompts you may otherwise get for invalid
-# certificates and the like.
-eval $(gnome-keyring-daemon --start)
-export GNOME_KEYRING_SOCKET
-export GNOME_KEYRING_PID
+eval $(/usr/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh)
+export SSH_AUTH_SOCK
 
 exec xmonad
