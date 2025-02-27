@@ -108,7 +108,13 @@ function ret2bkr {
   bkrssh "$1" 'return2beaker.sh'
 }
 
-eval $(dircolors -b "$XDG_CONFIG_HOME/.dir_colors")
+# colored ls
+if command -v gdircolors &> /dev/null; then
+  eval $(gdircolors -b "$XDG_CONFIG_HOME/.dir_colors")
+else
+  eval $(dircolors -b "$XDG_CONFIG_HOME/.dir_colors")
+fi
+export LSCOLORS="$LS_COLORS"
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 
 export LESS_COMMON_OPTS='-R --mouse --wheel-lines=3'
