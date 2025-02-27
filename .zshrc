@@ -175,3 +175,9 @@ source $PLUGIN_DIR/zsh-history-substring-search/zsh-history-substring-search.zsh
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=bold,fg=39
+
+# SSH and GPG
+export GPG_TTY="$TTY"
+if [[ "$OSTYPE" = darwin* ]]; then
+  ssh-add -l &>/dev/null || ssh-add --apple-load-keychain -q &
+fi
