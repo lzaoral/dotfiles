@@ -65,18 +65,36 @@ if [[ "$TERM" == (alacritty|gnome*|konsole*|putty*|rxvt*|screen*|tmux*|xterm*) ]
   add-zsh-hook -Uz preexec xterm_title_preexec
 fi
 
+# Aliases
+alias vimrc="$VISUAL ~/.vim/vimrc"
+alias zshrc="$VISUAL ~/.zshrc && source ~/.zshrc"
+alias tmuxrc="$VISUAL $XDG_CONFIG_HOME/tmux/tmux.conf"
+# alias xmonadrc="$VISUAL $XDG_CONFIG_HOME/xmonad/xmonad.hs && xmonad --recompile && xmonad --restart"
+# alias xmobarrc="$VISUAL $XDG_CONFIG_HOME/xmobar/xmobar*.hs && xmonad --restart"
+
+if [[ "$OSTYPE" = darwin* ]]; then
+  alias stat='stat -x'
+  alias sed='gsed'
+  alias ls='gls --color=auto'
+else
+  alias ls='ls --color=auto'
+fi
+
 alias cal='cal --color=auto'
-alias ls='ls --color=auto'
+alias ll='ls -la'
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias diff='diff --color=auto'
-
-alias ll='ls -la'
+alias mc='mc --nosubshell'
 
 alias ccat='highlight -O xterm256 -l'
-alias virsh='virsh --connect qemu:///system'
-alias fedora='virsh start fedora && sleep 20s; ssh fedora'
+
+# Mac-only
+function fedora {
+  [[ "$(utmctl status Fedora)" == 'stopped' ]] && utmctl start Fedora
+  ssh fedora
+}
 
 alias dgit="git --git-dir ~/.dotfiles/.git --work-tree=$HOME"
 
@@ -84,6 +102,9 @@ alias dgit="git --git-dir ~/.dotfiles/.git --work-tree=$HOME"
 alias cmake="cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -GNinja -Bbuild"
 
 alias bkrssh="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -l root"
+function ret2bkr {
+  bkrssh "$1" 'return2beaker.sh'
+}
 
 eval $(dircolors -b "$XDG_CONFIG_HOME/.dir_colors")
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
@@ -115,13 +136,6 @@ export PATH="/usr/lib/ccache/bin:$PATH"
 
 # python user-site
 export PATH="$PATH:$HOME/.local/bin"
-
-# Aliases
-alias vimrc="$VISUAL ~/.vim/vimrc"
-alias zshrc="$VISUAL ~/.zshrc && source ~/.zshrc"
-alias tmuxrc="$VISUAL $XDG_CONFIG_HOME/tmux/tmux.conf"
-alias xmonadrc="$VISUAL $XDG_CONFIG_HOME/xmonad/xmonad.hs && xmonad --recompile && xmonad --restart"
-alias xmobarrc="$VISUAL $XDG_CONFIG_HOME/xmobar/xmobar*.hs && xmonad --restart"
 
 # ccache
 if brew --prefix &> /dev/null; then
