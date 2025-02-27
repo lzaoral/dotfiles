@@ -1,6 +1,10 @@
 if [[ "$TERM" == (alacritty|*termite) ]]; then
   export COLORTERM=truecolor
 fi
+XDG_CONFIG_HOME=$HOME/.config
+XDG_CACHE_HOME=$HOME/.cache
+XDG_DATA_HOME=$HOME/.local/share
+export XDG_CURRENT_DESKTOP=gnome
 
 set -o emacs
 
