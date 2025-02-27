@@ -1,12 +1,10 @@
-if [[ "$TERM" == (alacritty|*termite) ]]; then
-  export COLORTERM=truecolor
-fi
 XDG_CONFIG_HOME=$HOME/.config
 XDG_CACHE_HOME=$HOME/.cache
 XDG_DATA_HOME=$HOME/.local/share
 export XDG_CURRENT_DESKTOP=gnome
 
 set -o emacs
+export COLORTERM=truecolor
 
 if [[ "$OSTYPE" = darwin* ]]; then
   if [[ "$(arch)" = "arm64" ]]; then
@@ -134,6 +132,7 @@ export EDITOR="$VISUAL"
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 export CLICOLOR_FORCE=1
 export HOMEBREW_NO_ANALYTICS=1
+export CLICOLOR_FORCE=1
 
 # ccache
 export PATH="/usr/lib/ccache/bin:$PATH"
