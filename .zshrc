@@ -2,6 +2,8 @@ if [[ "$TERM" == (alacritty|*termite) ]]; then
   export COLORTERM=truecolor
 fi
 
+set -o emacs
+
 if [[ -z "$CODE" ]] && [[ -n "$DISPLAY" ]] && ! xprop -id "$WINDOWID" 2> /dev/null \
         | grep -q Scratchpad ; then
   # If not running interactively, do not do anything
@@ -73,13 +75,6 @@ alias bkrssh="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -l
 
 eval $(dircolors -b "$XDG_CONFIG_HOME/.dir_colors")
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
-
-bindkey "\e[1~" beginning-of-line
-bindkey "\e[2~" quoted-insert
-bindkey "\e[3~" delete-char
-bindkey "\e[4~" end-of-line
-bindkey "\e[5~" beginning-of-history
-bindkey "\e[6~" end-of-history
 
 export LESS_COMMON_OPTS='-R --mouse --wheel-lines=3'
 export LESSOPEN='| /usr/bin/source-highlight-esc.sh %s'
