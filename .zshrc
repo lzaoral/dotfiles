@@ -4,6 +4,14 @@ fi
 
 set -o emacs
 
+if [[ "$OSTYPE" = darwin* ]]; then
+  if [[ "$(arch)" = "arm64" ]]; then
+      eval "$(/opt/homebrew/bin/brew shellenv)"
+  else
+      eval "$(/usr/local/bin/brew shellenv)"
+  fi
+fi
+
 if [[ -z "$CODE" ]] && [[ -n "$DISPLAY" ]] && ! xprop -id "$WINDOWID" 2> /dev/null \
         | grep -q Scratchpad ; then
   # If not running interactively, do not do anything
@@ -23,7 +31,11 @@ HISTFILE=~/.histfile
 HISTSIZE=1000
 SAVEHIST=10000
 
-fpath=(/usr/share/zsh/site-functions/ $fpath)
+if brew --prefix &> /dev/null; then
+  fpath+=("$(brew --prefix)"/share/{zsh/site-functions,zsh-completions})
+else
+  fpath+=(/usr/share/zsh/site-functions/)
+fi
 
 autoload -Uz compinit
 compinit
@@ -96,6 +108,7 @@ export VISUAL=vim
 export EDITOR="$VISUAL"
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 export CLICOLOR_FORCE=1
+export HOMEBREW_NO_ANALYTICS=1
 
 # ccache
 export PATH="/usr/lib/ccache/bin:$PATH"
@@ -110,12 +123,24 @@ alias tmuxrc="$VISUAL $XDG_CONFIG_HOME/tmux/tmux.conf"
 alias xmonadrc="$VISUAL $XDG_CONFIG_HOME/xmonad/xmonad.hs && xmonad --recompile && xmonad --restart"
 alias xmobarrc="$VISUAL $XDG_CONFIG_HOME/xmobar/xmobar*.hs && xmonad --restart"
 
+# ccache
+if brew --prefix &> /dev/null; then
+  export PATH="$(brew --prefix ccache)/libexec:$PATH"
+else
+  export PATH="/usr/lib/ccache/bin:$PATH"
+fi
+
 # Enable VA-API with X11 and Firefox
 export MOZ_X11_EGL=1
 
-PLUGIN_DIR=/usr/share/zsh/plugins
+# zsh plugins
+if brew --prefix &> /dev/null; then
+  PLUGIN_DIR="$(brew --prefix)/share"
+else
+  PLUGIN_DIR=/usr/share/zsh/plugins
+fi
 
-source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
+source $PLUGIN_DIR/powerlevel10k/powerlevel10k.zsh-theme
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
